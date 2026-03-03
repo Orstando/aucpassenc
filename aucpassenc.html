@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script>
+
+  </head>
+  <body>
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        await pyodide.loadPackage('micropip')
+        await pyodide.loadPackage('bcrypt')
+        console.log(pyodide.runPython(`
+import bcrypt
+def encrypt(password):
+	hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+	result = hashed.decode('utf-8')
+	print(result)
+encrypt(input())
+        `));
+      }
+      main();
+	</script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+	<script>eruda.init();</script>
+  </body>
+</html>
