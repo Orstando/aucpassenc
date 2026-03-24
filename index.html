@@ -1,27 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-      <script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script>
+    <style>
+      body {
+        text-align: center;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        margin: 0 auto;
+        width: fit-content;
+      }
 
+      .title img {
+        width: 60px;
+      }
+
+      .title p {
+        margin: 0;
+        font-size: 30px;
+      }
+    </style>
   </head>
   <body>
-    <script type="text/javascript">
-      async function main(){
-        let pyodide = await loadPyodide();
-        await pyodide.loadPackage('micropip')
-        await pyodide.loadPackage('bcrypt')
-        console.log(pyodide.runPython(`
-import bcrypt
-def encrypt(password):
-	hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-	result = hashed.decode('utf-8')
-	print(result)
-encrypt(input())
-        `));
+    <div class="title">
+      <img src="icon.png">
+      <p>Aurorachat Password Encryptor</p>
+    </div><br>
+    <script type="module">
+      import bcrypt from "https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/+esm";
+      window.hash = async function(password) {
+        if (password.length > 70) {
+          document.getElementById("error").style.display = "block";
+        } else {
+          var salt = await bcrypt.genSalt(10);
+          var hash = await bcrypt.hash(password, salt);
+          document.getElementById("result").value = hash
+          document.getElementById("error").style.display = "none";
+        }
       }
-      main();
-	</script>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-	<script>eruda.init();</script>
+    </script>
+    <input type="text" id="password" placeholder="Password" style="width:25%">
+    <button onclick="hash(document.getElementById('password').value)">Encrypt</button><br>
+    <span style="display:none;color:red" id="error">Error: Password must be maximum 70 characters.</span>
+    <textarea id="result" style="width:30%;height:25%" placeholder="Result will show up here" readonly></textarea>
   </body>
 </html>
